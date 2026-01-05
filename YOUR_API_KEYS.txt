@@ -1,0 +1,58 @@
+═══════════════════════════════════════════════════════════════
+                    YOUR API CREDENTIALS
+═══════════════════════════════════════════════════════════════
+
+⚠️  KEEP THIS FILE SECURE - DO NOT SHARE OR COMMIT TO GIT ⚠️
+
+Dashboard App Credentials:
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+API Key:
+17d01976f216103a1c3412684258f4bd5d5467b46e5ee4183f597bbc7c440655
+
+Secret Key:
+6677bbde30277eac9a0675d6c31387be6675393cc757e07c0a32048b8a79708f040f8c8d43e3eb7828530083c406dc1e2168a2145c01a5667a51713c10ddb0ea
+
+Permissions: read, write
+Created: November 30, 2025
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+How to Use:
+-----------
+
+1. Include these headers in all API requests:
+   X-API-Key: 17d01976f216103a1c3412684258f4bd5d5467b46e5ee4183f597bbc7c440655
+   X-Secret-Key: 6677bbde30277eac9a0675d6c31387be6675393cc757e07c0a32048b8a79708f040f8c8d43e3eb7828530083c406dc1e2168a2145c01a5667a51713c10ddb0ea
+
+2. Enable authentication on server:
+   Windows CMD:    set REQUIRE_AUTH=true && node server.mjs
+   PowerShell:     $env:REQUIRE_AUTH="true"; node server.mjs
+   Linux/Mac:      REQUIRE_AUTH=true node server.mjs
+
+3. Example cURL request:
+   curl http://localhost:5000/models \
+     -H "X-API-Key: 17d01976f216103a1c3412684258f4bd5d5467b46e5ee4183f597bbc7c440655" \
+     -H "X-Secret-Key: 6677bbde30277eac9a0675d6c31387be6675393cc757e07c0a32048b8a79708f040f8c8d43e3eb7828530083c406dc1e2168a2145c01a5667a51713c10ddb0ea"
+
+Management Commands:
+--------------------
+
+List all keys:     node manage-keys.mjs list
+Create new key:    node manage-keys.mjs create "App Name"
+Delete key:        node manage-keys.mjs delete <api-key>
+Show details:      node manage-keys.mjs show <api-key>
+
+Security Notes:
+---------------
+
+✓ Keys are stored in: backend/api_keys.json
+✓ Add api_keys.json to .gitignore
+✓ Never expose keys in client-side code
+✓ Use environment variables in production
+✓ Rotate keys regularly
+✓ Delete unused keys immediately
+
+For complete documentation, see: API_KEY_GUIDE.md
+
+═══════════════════════════════════════════════════════════════

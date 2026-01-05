@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Glasses Try-On</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🥽</text></svg>">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="mobile-frame">
+        <video id="video" 
+            autoplay 
+            playsinline 
+            muted
+        ></video>
+        <canvas id="three-canvas"></canvas>
+
+        <div id="status">Initializing...</div>
+
+        <!-- Start Camera Button (initially visible) -->
+        <div id="start-camera-container">
+            <button id="start-camera">🎥 Start Camera</button>
+        </div>
+
+        <!-- Glasses info display -->
+        <div id="glasses-info"></div>
+
+        <div id="controls">
+            <button id="btn-prev">◀ Prev</button>
+            <button id="btn-next">Next ▶</button>
+            <button id="btn-screenshot">📸</button>
+            <button id="btn-reset">↺</button>
+            <button id="settingsBtn">⚙️</button>
+        </div>
+
+        <div id="controlPanel">
+            <label>Scale: <input type="range" id="scaleSlider" min="0.5" max="2.0" step="0.05" value="1.0"></label>
+            <label>Width: <input type="range" id="widthSlider" min="0.8" max="1.2" step="0.01" value="1.0"></label>
+            <label>Y Offset: <input type="range" id="yOffsetSlider" min="-50" max="50" step="1" value="0"></label>
+            <label>Z Offset: <input type="range" id="zOffsetSlider" min="-100" max="50" step="1" value="0"></label>
+        </div>
+    </div>
+
+    <!-- Import Map -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.152.0/build/three.module.js",
+                "three/examples/jsm/loaders/GLTFLoader.js": "https://unpkg.com/three@0.152.0/examples/jsm/loaders/GLTFLoader.js",
+                "three/examples/jsm/loaders/RGBELoader.js": "https://unpkg.com/three@0.152.0/examples/jsm/loaders/RGBELoader.js"
+            }
+        }
+    </script>
+
+    <!-- MediaPipe FaceMesh - Multiple CDN fallbacks -->
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/face_mesh@0.4/face_mesh.js" 
+            onerror="this.onerror=null; this.src='https://unpkg.com/@mediapipe/face_mesh@0.4/face_mesh.js';"></script>
+
+    <!-- Module Script -->
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
