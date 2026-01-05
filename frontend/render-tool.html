@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLB Reference Image Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    #canvas { border: 1px solid #ccc; margin: 20px 0; }
+    button { padding: 10px 20px; margin: 5px; font-size: 16px; }
+    #status { margin: 20px 0; padding: 10px; background: #f0f0f0; }
+    .progress { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>GLB Reference Image Generator</h1>
+  <p>This tool will render each GLB model and let you download reference images.</p>
+  
+  <div id="status">Ready</div>
+  <button onclick="startRendering()">Start Rendering All Models</button>
+  <button onclick="renderCurrent()">Render Current Model</button>
+  <button onclick="downloadImage()">Download Current Image</button>
+  
+  <div class="progress">
+    <div>Progress: <span id="progress">0/0</span></div>
+    <div>Current: <span id="current">-</span></div>
+  </div>
+  
+  <canvas id="canvas" width="512" height="512"></canvas>
+  
+  <script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js';
+    import { GLTFLoader } from 'https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/loaders/GLTFLoader.js';
+    
+    const API = 'https://ai-glasses-backend.onrender.com';
+    let models = [];
+    let currentIndex = 0;
+    let scene, camera, renderer, currentModel;
+    
+    // Setup Three.js
+    const canvas = document.getElementById('canvas');
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xffffff);
+    
+    camera = new THREE.PerspectiveCamera(45, 1, 0.1, 1000);
+    camera.position.set(0, 0, 5);
+    
+    renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
+    renderer.setSize(512, 512);
+    
+    // Lighting
+    const ambient = new THREE.AmbientLight(0xffffff, 0.6);
+    scene.add(ambient);
+    const dir1 = new THREE.DirectionalLight(0xffffff, 0.8);
+    dir1.position.set(5, 5, 5);
+    scene.add(dir1);
+    const dir2 = new THREE.DirectionalLight(0xffffff, 0.4);
+    dir2.position.set(-5, 3, -5);
+    scene.add(dir2);
+    
+    // Load models list
+    fetch(API + '/models')
+      .then(r => r.json())
+      .then(data => {
+        models = data;
+        document.getElementById('progress').textContent = `0/${models.length}`;
+        document.getElementById('status').textContent = `Loaded ${models.length} models`;
+      });
+    
+    window.renderCurrent = function() {
+      if (currentIndex >= models.length) {
+        document.getElementById('status').textContent = 'All done!';
+        return;
+      }
+      
+      const model = models[currentIndex];
+      document.getElementById('current').textContent = model.name;
+      document.getElementById('status').textContent = `Rendering ${currentIndex + 1}/${models.length}...`;
+      
+      // Clear previous model
+      if (currentModel) {
+        scene.remove(currentModel);
+      }
+      
+      // Load new model
+      const loader = new GLTFLoader();
+      loader.load(model.url, (gltf) => {
+        currentModel = gltf.scene;
+        
+        // Center and scale
+        const box = new THREE.Box3().setFromObject(currentModel);
+        const size = new THREE.Vector3();
+        const center = new THREE.Vector3();
+        box.getSize(size);
+        box.getCenter(center);
+        
+        const maxDim = Math.max(size.x, size.y, size.z);
+        if (maxDim > 0) {
+          currentModel.scale.setScalar(3.0 / maxDim);
+          box.setFromObject(currentModel);
+          box.getCenter(center);
+        }
+        
+        currentModel.position.set(-center.x, -center.y, -center.z);
+        scene.add(currentModel);
+        
+        // Render
+        renderer.render(scene, camera);
+        document.getElementById('status').textContent = `Rendered ${model.name}`;
+      });
+    };
+    
+    window.downloadImage = function() {
+      const model = models[currentIndex];
+      const link = document.createElement('a');
+      link.download = model.name.replace('.glb', '.jpg');
+      link.href = canvas.toDataURL('image/jpeg', 0.9);
+      link.click();
+    };
+    
+    window.startRendering = async function() {
+      for (currentIndex = 0; currentIndex < models.length; currentIndex++) {
+        await new Promise(resolve => {
+          renderCurrent();
+          setTimeout(() => {
+            downloadImage();
+            document.getElementById('progress').textContent = `${currentIndex + 1}/${models.length}`;
+            resolve();
+          }, 2000);
+        });
+      }
+      document.getElementById('status').textContent = 'All models rendered and downloaded!';
+    };
+  </script>
+</body>
+</html>
