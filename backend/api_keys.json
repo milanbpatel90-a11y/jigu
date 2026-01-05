@@ -1,0 +1,24 @@
+{
+  "17d01976f216103a1c3412684258f4bd5d5467b46e5ee4183f597bbc7c440655": {
+    "name": "Dashboard App",
+    "secretKey": "6677bbde30277eac9a0675d6c31387be6675393cc757e07c0a32048b8a79708f040f8c8d43e3eb7828530083c406dc1e2168a2145c01a5667a51713c10ddb0ea",
+    "permissions": [
+      "read",
+      "write"
+    ],
+    "createdAt": "2025-11-29T20:38:40.738Z",
+    "lastUsed": null,
+    "usageCount": 0
+  },
+  "fb1048911548b7f6f9a0c6541331b01f9981499b6d31c84f37fe4a360e8e3722": {
+    "name": "New App",
+    "secretKey": "0067a28d0798f872555b3524f95501e0c816c48a2391aa3b7bf4e08fe7432df90f07a172ecd767e94b748334fcb113a30e185ca6298485066c92950b8842e939",
+    "permissions": [
+      "read",
+      "write"
+    ],
+    "createdAt": "2025-11-29T20:42:40.514Z",
+    "lastUsed": null,
+    "usageCount": 0
+  }
+}
