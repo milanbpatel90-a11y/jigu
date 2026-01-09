@@ -12,6 +12,30 @@ import colorsys
 REF_DIR = "reference_images"
 EMBEDDINGS_FILE = "reference_embeddings.pt"
 
+# Available models in Wasabi (will be populated from S3)
+AVAILABLE_MODELS = []
+
+# Shape keywords for matching
+SHAPE_KEYWORDS = {
+    'round': ['round', 'circular', 'circle', 'oval', 'metal_round', 'lennon', 'vintage', 'retro', 'classic'],
+    'square': ['square', 'rectangular', 'rectangle', 'box', 'wayfarer', 'nerd', 'hipster'],
+    'cat_eye': ['cat_eye', 'cat-eye', 'cateye', 'cat'],
+    'aviator': ['aviator', 'pilot', 'teardrop', 'ray_ban', 'rayban'],
+    'wayfarer': ['wayfarer', 'classic', 'black_glasses'],
+    'oversized': ['oversized', 'big', 'large', 'xl'],
+    'rimless': ['rimless', 'frameless', 'minimal'],
+    'sport': ['sport', 'athletic', 'wrap', 'shield', 'oakley'],
+    'vintage': ['vintage', 'retro', 'old', 'prada'],
+    'futuristic': ['futuristic', 'modern', 'cyber', 'tech', 'vr'],
+    'heart': ['heart', 'love'],
+    'geometric': ['geometric', 'hexagon', 'octagon', 'polygon'],
+}
+
+def set_available_models(models):
+    """Set the list of available models from S3"""
+    global AVAILABLE_MODELS
+    AVAILABLE_MODELS = models
+
 
 def remove_background(image):
     """Remove background from glasses image to improve matching"""
@@ -253,6 +277,18 @@ def simple_match(image_paths=None):
         "frameScale": 1.0, "frameMaterial": "plastic", "frameMetalness": 0.1
     }
     
+    print(f"simple_match called with {len(image_paths) if image_paths else 0} images", file=sys.stderr)
+    
+    # Try shape-based matching if we have images
+    if image_paths and len(image_paths) > 0:
+        print("Attempting shape-based matching...", file=sys.stderr)
+        shape_result = match_by_shape(image_paths, properties)
+        if shape_result:
+            print(f"Shape match found: {shape_result.get('best_model')}", file=sys.stderr)
+            return shape_result
+        else:
+            print("Shape matching returned None", file=sys.stderr)
+    
     if refs:
         base = os.path.splitext(refs[0])[0]
         return {
@@ -271,6 +307,198 @@ def simple_match(image_paths=None):
         "method": "default",
         **properties
     }
+
+
+def detect_glasses_shape(image_paths):
+    """Detect the shape of glasses from uploaded images"""
+    try:
+        from PIL import Image
+        import numpy as np
+        
+        shapes_detected = []
+        
+        for img_path in image_paths:
+            img = Image.open(img_path).convert('L')  # Grayscale
+            img = img.resize((200, 200))
+            pixels = np.array(img)
+            
+            # Find the glasses region (darker pixels)
+            # Use adaptive threshold based on image
+            mean_val = np.mean(pixels)
+            threshold = min(mean_val * 0.8, 180)
+            dark_mask = pixels < threshold
+            
+            if not np.any(dark_mask):
+                print(f"  No dark pixels found in {img_path}", file=sys.stderr)
+                continue
+            
+            # Find bounding box
+            rows = np.any(dark_mask, axis=1)
+            cols = np.any(dark_mask, axis=0)
+            
+            if not np.any(rows) or not np.any(cols):
+                continue
+                
+            rmin, rmax = np.where(rows)[0][[0, -1]]
+            cmin, cmax = np.where(cols)[0][[0, -1]]
+            
+            height = rmax - rmin
+            width = cmax - cmin
+            
+            if height == 0 or width == 0:
+                continue
+            
+            aspect_ratio = width / height
+            print(f"  Image aspect ratio: {aspect_ratio:.2f}", file=sys.stderr)
+            
+            # Extract the glasses region
+            region = dark_mask[rmin:rmax, cmin:cmax]
+            
+            # Calculate fill ratio (how much of bounding box is filled)
+            total_pixels = region.size
+            dark_pixels = np.sum(region)
+            fill_ratio = dark_pixels / total_pixels if total_pixels > 0 else 0
+            print(f"  Fill ratio: {fill_ratio:.2f}", file=sys.stderr)
+            
+            # Calculate circularity - round glasses have high circularity
+            # Check if the shape is more circular by looking at the corners
+            h, w = region.shape
+            if h > 10 and w > 10:
+                # Check corners - round glasses have less fill in corners
+                corner_size = min(h, w) // 4
+                corners = [
+                    region[:corner_size, :corner_size],  # top-left
+                    region[:corner_size, -corner_size:],  # top-right
+                    region[-corner_size:, :corner_size],  # bottom-left
+                    region[-corner_size:, -corner_size:]  # bottom-right
+                ]
+                corner_fill = np.mean([np.mean(c) for c in corners])
+                center_region = region[h//4:3*h//4, w//4:3*w//4]
+                center_fill = np.mean(center_region) if center_region.size > 0 else 0
+                
+                circularity = center_fill / (corner_fill + 0.01)  # Higher = more round
+                print(f"  Circularity score: {circularity:.2f}", file=sys.stderr)
+            else:
+                circularity = 1.0
+            
+            # Detect shape type based on multiple factors
+            # Round glasses: aspect ratio close to 1, high circularity, lower corner fill
+            if circularity > 1.5 or (aspect_ratio < 1.5 and fill_ratio < 0.5):
+                shapes_detected.append('round')
+                print(f"  -> Detected as ROUND", file=sys.stderr)
+            elif aspect_ratio > 2.5:
+                shapes_detected.append('aviator')
+                print(f"  -> Detected as AVIATOR", file=sys.stderr)
+            elif aspect_ratio > 1.8:
+                if fill_ratio > 0.6:
+                    shapes_detected.append('wayfarer')
+                    print(f"  -> Detected as WAYFARER", file=sys.stderr)
+                else:
+                    shapes_detected.append('sport')
+                    print(f"  -> Detected as SPORT", file=sys.stderr)
+            elif aspect_ratio > 1.3:
+                if fill_ratio > 0.7:
+                    shapes_detected.append('square')
+                    print(f"  -> Detected as SQUARE", file=sys.stderr)
+                else:
+                    shapes_detected.append('cat_eye')
+                    print(f"  -> Detected as CAT_EYE", file=sys.stderr)
+            else:
+                if fill_ratio > 0.75:
+                    shapes_detected.append('round')
+                    print(f"  -> Detected as ROUND (high fill)", file=sys.stderr)
+                else:
+                    shapes_detected.append('round')  # Default to round for ambiguous cases
+                    print(f"  -> Detected as ROUND (default)", file=sys.stderr)
+        
+        # Return most common shape
+        if shapes_detected:
+            from collections import Counter
+            result = Counter(shapes_detected).most_common(1)[0][0]
+            print(f"Final shape decision: {result} (from {shapes_detected})", file=sys.stderr)
+            return result
+        
+        return 'round'  # Default to round instead of classic
+        
+    except Exception as e:
+        print(f"Shape detection error: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+        return 'round'  # Default to round
+
+
+def match_by_shape(image_paths, properties):
+    """Match uploaded images to a model based on detected shape"""
+    try:
+        # Detect shape from uploaded images
+        detected_shape = detect_glasses_shape(image_paths)
+        print(f"Detected shape: {detected_shape}", file=sys.stderr)
+        
+        # Get available models (passed from Node.js or read from file)
+        models = AVAILABLE_MODELS if AVAILABLE_MODELS else get_models_from_file()
+        
+        print(f"Available models: {len(models)}", file=sys.stderr)
+        
+        if not models:
+            print("No models available for matching", file=sys.stderr)
+            return None
+        
+        # Find models matching the detected shape
+        shape_keywords = SHAPE_KEYWORDS.get(detected_shape, [detected_shape])
+        print(f"Looking for keywords: {shape_keywords}", file=sys.stderr)
+        
+        matching_models = []
+        for model in models:
+            model_lower = model.lower()
+            for keyword in shape_keywords:
+                if keyword in model_lower:
+                    matching_models.append(model)
+                    print(f"  Found match: {model} (keyword: {keyword})", file=sys.stderr)
+                    break
+        
+        print(f"Found {len(matching_models)} matching models", file=sys.stderr)
+        
+        # If no shape match, try to find any glasses model
+        if not matching_models:
+            print("No shape matches, using generic glasses models", file=sys.stderr)
+            # Filter out non-glasses models
+            glasses_models = [m for m in models if 'glasses' in m.lower() or 'spectacle' in m.lower() or 'eyewear' in m.lower()]
+            if glasses_models:
+                matching_models = glasses_models[:10]  # Take first 10
+            else:
+                matching_models = models[:10]
+        
+        # Pick the best match (first one for now)
+        best_model = matching_models[0] if matching_models else models[0]
+        print(f"Selected model: {best_model}", file=sys.stderr)
+        
+        return {
+            "best_model": best_model,
+            "confidence": 0.75 if detected_shape != 'classic' else 0.5,
+            "source_image": "shape_detection",
+            "matched": True,
+            "method": "shape_match",
+            "detected_shape": detected_shape,
+            **properties
+        }
+        
+    except Exception as e:
+        print(f"Shape matching error: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+        return None
+
+
+def get_models_from_file():
+    """Read available models from a cache file"""
+    try:
+        cache_file = "models_cache.json"
+        if os.path.exists(cache_file):
+            with open(cache_file, 'r') as f:
+                return json.load(f)
+    except:
+        pass
+    return []
 
 
 def load_clip():

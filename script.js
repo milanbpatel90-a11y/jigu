@@ -663,4 +663,115 @@ document.addEventListener('DOMContentLoaded', () => {
         startCamera();
     });
 
+    // Upload Modal Functionality
+    const uploadBtn = document.getElementById('uploadBtn');
+    const uploadModal = document.getElementById('uploadModal');
+    const closeModal = document.querySelector('.close');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const rebuildBtn = document.getElementById('rebuildBtn');
+
+    // Open upload modal
+    uploadBtn.addEventListener('click', () => {
+        uploadModal.style.display = 'block';
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        uploadModal.style.display = 'none';
+        uploadStatus.style.display = 'none';
+    });
+
+    // Close modal when clicking outside
+    window.addEventListener('click', (event) => {
+        if (event.target === uploadModal) {
+            uploadModal.style.display = 'none';
+            uploadStatus.style.display = 'none';
+        }
+    });
+
+    // Handle form submission
+    uploadForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = new FormData();
+        const glbFile = document.getElementById('glbFile').files[0];
+        const thumbFile = document.getElementById('thumbFile').files[0];
+        
+        if (!glbFile) {
+            showUploadStatus('Please select a GLB file', 'error');
+            return;
+        }
+        
+        formData.append('file', glbFile);
+        if (thumbFile) {
+            formData.append('thumb', thumbFile);
+        }
+        
+        try {
+            showUploadStatus('Uploading...', 'info');
+            
+            const headers = {};
+            // Add API keys if configured
+            if (API_CONFIG.apiKey && API_CONFIG.secretKey) {
+                headers['X-API-Key'] = API_CONFIG.apiKey;
+                headers['X-Secret-Key'] = API_CONFIG.secretKey;
+            }
+            
+            const response = await fetch('http://localhost:5000/upload-model', {
+                method: 'POST',
+                body: formData,
+                headers: headers // Don't set Content-Type for FormData
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showUploadStatus('✅ Upload successful! Model added to collection.', 'success');
+                uploadForm.reset();
+                // Refresh models list
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                showUploadStatus(`❌ Upload failed: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+            showUploadStatus(`❌ Upload failed: ${error.message}`, 'error');
+        }
+    });
+
+    // Handle rebuild embeddings
+    rebuildBtn.addEventListener('click', async () => {
+        try {
+            showUploadStatus('Rebuilding AI embeddings...', 'info');
+            
+            const response = await fetch('http://localhost:5000/rebuild-embeddings', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...getAuthHeaders()
+                }
+            });
+            
+            const result = await response.json();
+            
+            if (response.ok) {
+                showUploadStatus('✅ AI embeddings rebuilt successfully!', 'success');
+            } else {
+                showUploadStatus(`❌ Rebuild failed: ${result.error}`, 'error');
+            }
+        } catch (error) {
+            console.error('Rebuild error:', error);
+            showUploadStatus(`❌ Rebuild failed: ${error.message}`, 'error');
+        }
+    });
+
+    function showUploadStatus(message, type) {
+        uploadStatus.textContent = message;
+        uploadStatus.className = type;
+        uploadStatus.style.display = 'block';
+    }
+
 });

@@ -34,6 +34,7 @@
             <button id="btn-screenshot">📸</button>
             <button id="btn-reset">↺</button>
             <button id="settingsBtn">⚙️</button>
+            <button id="uploadBtn">📁 Upload GLB</button>
         </div>
 
         <div id="controlPanel">
@@ -41,6 +42,33 @@
             <label>Width: <input type="range" id="widthSlider" min="0.8" max="1.2" step="0.01" value="1.0"></label>
             <label>Y Offset: <input type="range" id="yOffsetSlider" min="-50" max="50" step="1" value="0"></label>
             <label>Z Offset: <input type="range" id="zOffsetSlider" min="-100" max="50" step="1" value="0"></label>
+        </div>
+
+        <!-- Upload Modal -->
+        <div id="uploadModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Upload Glasses Model</h2>
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="upload-section">
+                        <label for="glbFile">GLB Model File:</label>
+                        <input type="file" id="glbFile" name="file" accept=".glb" required>
+                        <small>Select a .glb 3D model file</small>
+                    </div>
+                    
+                    <div class="upload-section">
+                        <label for="thumbFile">Thumbnail Image (Optional):</label>
+                        <input type="file" id="thumbFile" name="thumb" accept="image/*">
+                        <small>Reference image for AI matching</small>
+                    </div>
+                    
+                    <div class="upload-actions">
+                        <button type="submit" id="uploadSubmit">Upload Model</button>
+                        <button type="button" id="rebuildBtn">Rebuild AI Embeddings</button>
+                    </div>
+                </form>
+                <div id="uploadStatus"></div>
+            </div>
         </div>
     </div>
 

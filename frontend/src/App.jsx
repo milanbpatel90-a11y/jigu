@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Viewer from "./Viewer.jsx";
 import TryOnView from "./tryon/TryOnView.jsx";
 
-const API = import.meta.env.VITE_API_URL || "https://ai-glasses-backend.onrender.com";
+const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
 export default function App() {
   const [activeTab, setActiveTab] = useState("finder");

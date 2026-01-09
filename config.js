@@ -1,15 +1,19 @@
 // API Configuration for 3D Glasses Model - Frontend Try On
 export const API_CONFIG = {
-    // Backend API (Render)
-    backendUrl: 'https://ai-glasses-backend.onrender.com',
+    // Backend API (Local development)
+    backendUrl: 'http://localhost:5000',
     
-    // Use Vite proxy for backend
-    proxyUrl: '/api',
+    // Use local backend for development
+    proxyUrl: 'http://localhost:5000',
     
     // Endpoint for saved models only
     savedModelsEndpoint: '/saved-models',
     
-    timeout: 30000
+    timeout: 30000,
+    
+    // API Keys (optional for local development)
+    apiKey: '17d01976f216103a1c3412684258f4bd5d5467b46e5ee4183f597bbc7c440655',
+    secretKey: '6677bbde30277eac9a0675d6c31387be6675393cc757e07c0a32048b8a79708f040f8c8d43e3eb7828530083c406dc1e2168a2145c01a5667a51713c10ddb0ea'
 };
 
 // Helper function to validate API keys
@@ -27,10 +31,17 @@ export function validateApiKeys() {
 
 // Helper function to get authorization headers
 export function getAuthHeaders() {
-    // Using standard headers to avoid CORS preflight issues
-    return {
+    const headers = {
         'Content-Type': 'application/json'
     };
+    
+    // Add API keys if configured and authentication is enabled
+    if (API_CONFIG.apiKey && API_CONFIG.secretKey) {
+        headers['X-API-Key'] = API_CONFIG.apiKey;
+        headers['X-Secret-Key'] = API_CONFIG.secretKey;
+    }
+    
+    return headers;
 }
 
 // Fetch saved glasses models from dashboard API

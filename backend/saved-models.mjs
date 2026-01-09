@@ -16,8 +16,8 @@ const s3 = new AWS.S3({
     s3ForcePathStyle: true
 });
 
-// Use "result" bucket for saved models
-const SAVED_MODELS_BUCKET = "result";
+// Use the dashboard1 bucket for saved models
+const SAVED_MODELS_BUCKET = "dashboard1";
 
 // Get all saved models from S3
 export async function getSavedModels() {
@@ -54,8 +54,18 @@ export async function saveModel(model) {
         id,
         name: model.name,
         glbUrl: model.glbUrl || model.url,
-        material: model.material || 'plastic',
-        colors: model.colors || { lens: '#000000', frame: '#000000' },
+        material: model.material || model.frameMaterial || 'plastic',
+        colors: model.colors || { 
+            lens: model.lensColor || '#000000', 
+            frame: model.frameColor || '#000000' 
+        },
+        lensColor: model.lensColor || model.colors?.lens || '#000000',
+        frameColor: model.frameColor || model.colors?.frame || '#000000',
+        tintOpacity: model.tintOpacity || 0.5,
+        frameMetalness: model.frameMetalness || 0.1,
+        frameScale: model.frameScale || 1.0,
+        confidence: model.confidence || 0,
+        source_image: model.source_image || 'manual',
         savedAt: new Date().toISOString()
     };
     
@@ -68,6 +78,7 @@ export async function saveModel(model) {
     models.unshift(newModel); // Add to beginning
     await saveModelsToS3(models);
     
+    console.log(`Saved model ${id}: ${newModel.name}`);
     return { success: true, model: newModel };
 }
 

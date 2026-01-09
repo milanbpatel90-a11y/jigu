@@ -42,8 +42,15 @@ const s3 = new AWS.S3({
 });
 
 const BUCKET = process.env.S3_BUCKET || "jigu";
+// Check if we have valid AWS credentials
+const hasValidCredentials = process.env.AWS_ACCESS_KEY_ID && 
+                           process.env.AWS_SECRET_ACCESS_KEY && 
+                           process.env.AWS_ACCESS_KEY_ID !== 'placeholder' &&
+                           process.env.AWS_SECRET_ACCESS_KEY !== 'placeholder' &&
+                           process.env.USE_LOCAL_MODE !== 'true';
+
 console.log(`S3 Config: endpoint=${s3Endpoint}, region=${s3Region}, bucket=${BUCKET}`);
-console.log(`AWS Credentials: key=${process.env.AWS_ACCESS_KEY_ID ? 'SET' : 'MISSING'}`);
+console.log(`AWS Credentials: ${hasValidCredentials ? 'VALID' : 'LOCAL MODE ENABLED'}`);
 
 if (!fs.existsSync("uploads")) fs.mkdirSync("uploads");
 if (!fs.existsSync(REF_DIR)) fs.mkdirSync(REF_DIR);
@@ -57,7 +64,37 @@ app.get("/", (req, res) => {
   res.json({ status: "ok", service: "AI Glasses Backend" });
 });
 
+// Serve local GLB models
+app.get("/local-models/:filename", (req, res) => {
+  const filename = req.params.filename;
+  const filePath = path.join("uploads", filename);
+  
+  if (fs.existsSync(filePath)) {
+    res.setHeader('Content-Type', 'model/gltf-binary');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.sendFile(path.resolve(filePath));
+  } else {
+    res.status(404).json({ error: "Model not found" });
+  }
+});
+
 app.get("/models", optionalAuth, async (req, res) => {
+  // Skip S3 if credentials are invalid to avoid timeouts
+  if (!hasValidCredentials) {
+    console.log("Using local fallback models (no valid S3 credentials)");
+    const localModels = [
+      {
+        name: "default.glb",
+        url: "http://localhost:5000/local-models/glasses2.glb"
+      },
+      {
+        name: "glasses2.glb", 
+        url: "http://localhost:5000/local-models/glasses2.glb"
+      }
+    ];
+    return res.json(localModels);
+  }
+
   try {
     const data = await s3.listObjectsV2({ Bucket: BUCKET }).promise();
     const files = (data.Contents || [])
@@ -70,29 +107,19 @@ app.get("/models", optionalAuth, async (req, res) => {
     res.json(files);
   } catch (e) {
     console.error("S3 error:", e.message);
-    // Fallback: create models list based on local reference images
-    try {
-      if (fs.existsSync(REF_DIR)) {
-        const refImages = fs.readdirSync(REF_DIR).filter(f => 
-          f.toLowerCase().endsWith('.jpg') || f.toLowerCase().endsWith('.png')
-        );
-        const models = refImages.map(img => {
-          const base = path.parse(img).name;
-          const glbName = base + '.glb';
-          return {
-            name: glbName,
-            url: s3.getSignedUrl("getObject", { Bucket: BUCKET, Key: glbName, Expires: 3600 })
-          };
-        });
-        console.log(`Returning ${models.length} models based on reference images`);
-        res.json(models);
-      } else {
-        res.json([]);
+    // Fallback: return local demo models
+    console.log("Using local fallback models");
+    const localModels = [
+      {
+        name: "default.glb",
+        url: "http://localhost:5000/local-models/glasses2.glb"
+      },
+      {
+        name: "glasses2.glb", 
+        url: "http://localhost:5000/local-models/glasses2.glb"
       }
-    } catch (fallbackError) {
-      console.error("Fallback error:", fallbackError);
-      res.status(500).json({ error: "Failed to list models" });
-    }
+    ];
+    res.json(localModels);
   }
 });
 
@@ -144,6 +171,19 @@ app.post("/match-model", optionalAuth, upload.array("images", 5), async (req, re
     const filePaths = req.files.map(f => f.path);
     console.log("Running match.py with files:", filePaths);
     
+    // Create models cache for Python script
+    try {
+      const data = await s3.listObjectsV2({ Bucket: BUCKET, MaxKeys: 500 }).promise();
+      const glbModels = (data.Contents || [])
+        .filter(f => f.Key.toLowerCase().endsWith('.glb'))
+        .filter(f => !f.Key.toLowerCase().includes('man') && !f.Key.toLowerCase().includes('woman'))
+        .map(f => f.Key);
+      fs.writeFileSync('models_cache.json', JSON.stringify(glbModels));
+      console.log(`Cached ${glbModels.length} models for Python`);
+    } catch (cacheErr) {
+      console.log("Could not cache models:", cacheErr.message);
+    }
+    
     const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
     const py = spawn(pythonCmd, ["match.py", ...filePaths], { cwd: process.cwd() });
     let out = "", errOut = "";
@@ -173,12 +213,38 @@ app.post("/match-model", optionalAuth, upload.array("images", 5), async (req, re
         
         // Add model URL to response if best_model exists
         if (jsonOut.best_model) {
-          jsonOut.model_url = s3.getSignedUrl("getObject", { 
-            Bucket: BUCKET, 
-            Key: jsonOut.best_model, 
-            Expires: 3600 
-          });
-          console.log("Generated model URL for:", jsonOut.best_model);
+          if (hasValidCredentials) {
+            try {
+              // If default.glb is returned, try to get the first actual model from S3
+              let modelKey = jsonOut.best_model;
+              if (modelKey === 'default.glb') {
+                try {
+                  const data = await s3.listObjectsV2({ Bucket: BUCKET }).promise();
+                  const glbFiles = (data.Contents || []).filter(f => f.Key.toLowerCase().endsWith('.glb'));
+                  if (glbFiles.length > 0) {
+                    modelKey = glbFiles[0].Key;
+                    jsonOut.best_model = modelKey;
+                    console.log("Using first available model from S3:", modelKey);
+                  }
+                } catch (listErr) {
+                  console.log("Could not list S3 models, using default");
+                }
+              }
+              
+              jsonOut.model_url = s3.getSignedUrl("getObject", { 
+                Bucket: BUCKET, 
+                Key: modelKey, 
+                Expires: 3600 
+              });
+              console.log("Generated S3 model URL for:", modelKey);
+            } catch (s3Error) {
+              console.log("S3 URL generation failed, using local fallback");
+              jsonOut.model_url = "http://localhost:5000/local-models/glasses2.glb";
+            }
+          } else {
+            console.log("Using local model URL (no valid S3 credentials)");
+            jsonOut.model_url = "http://localhost:5000/local-models/glasses2.glb";
+          }
         }
         
         // Send webhook notification
@@ -217,13 +283,25 @@ app.get("/saved-models", optionalAuth, async (req, res) => {
 // Save a model to dashboard
 app.post("/saved-models", optionalAuth, async (req, res) => {
   try {
-    const { name, glbUrl, url, material, colors } = req.body;
+    const { name, glbUrl, url, material, colors, lensColor, frameColor, tintOpacity, frameMetalness, frameScale, confidence, source_image, frameMaterial } = req.body;
     
     if (!name || (!glbUrl && !url)) {
       return res.status(400).json({ error: "name and glbUrl/url are required" });
     }
     
-    const result = await saveModel({ name, glbUrl: glbUrl || url, material, colors });
+    const result = await saveModel({ 
+      name, 
+      glbUrl: glbUrl || url, 
+      material: material || frameMaterial, 
+      colors,
+      lensColor,
+      frameColor,
+      tintOpacity,
+      frameMetalness,
+      frameScale,
+      confidence,
+      source_image
+    });
     
     if (result.success) {
       console.log(`Saved model: ${name}`);
@@ -233,7 +311,7 @@ app.post("/saved-models", optionalAuth, async (req, res) => {
     }
   } catch (e) {
     console.error("Error saving model:", e);
-    res.status(500).json({ error: "Failed to save model" });
+    res.status(500).json({ error: "Failed to save model: " + e.message });
   }
 });
 
@@ -305,9 +383,14 @@ async function downloadReferenceImages() {
 
 app.listen(PORT, () => {
   console.log(`3D AI Dashboard backend running on ${PORT}`);
-  // Download reference images in background (don't block startup)
-  downloadReferenceImages().catch(err => {
-    console.error("Background download error:", err);
-  });
+  // Only download reference images if we have valid credentials
+  if (hasValidCredentials) {
+    console.log("Starting background S3 reference image download...");
+    downloadReferenceImages().catch(err => {
+      console.error("Background download error:", err);
+    });
+  } else {
+    console.log("⚠️ Skipping S3 reference image download - using local mode");
+  }
 });
 
