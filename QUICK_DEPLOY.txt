@@ -1,0 +1,107 @@
+╔════════════════════════════════════════════════════════════════╗
+║           AI GLASSES DASHBOARD - QUICK DEPLOY                  ║
+╚════════════════════════════════════════════════════════════════╝
+
+📦 WHAT'S BEING DEPLOYED
+├─ Dashboard (frontend/) - AI Finder + Saved Models
+└─ Backend (backend/) - API Server with AI matching
+
+⏱️  TIME NEEDED: 15-20 minutes
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 STEP 1: DEPLOY BACKEND (10 min)
+
+1. Go to: https://dashboard.render.com/
+2. Click: New + → Web Service
+3. Connect your GitHub repo
+4. Configure:
+   ├─ Name: ai-glasses-backend
+   ├─ Root Directory: backend
+   ├─ Build: npm install && pip install -r requirements.txt
+   ├─ Start: node server.mjs
+   └─ Instance: Free
+
+5. Add Environment Variables (from backend/.env):
+   ├─ PORT=5000
+   ├─ AWS_ACCESS_KEY_ID=your_key
+   ├─ AWS_SECRET_ACCESS_KEY=your_secret
+   ├─ AWS_ENDPOINT=s3.eu-west-1.wasabisys.com
+   ├─ AWS_REGION=eu-west-1
+   ├─ S3_BUCKET=jigu
+   └─ REQUIRE_AUTH=false
+
+6. Click: Create Web Service
+7. Wait 3-5 minutes
+8. Copy your backend URL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 STEP 2: UPDATE FRONTEND CONFIG (1 min)
+
+1. Edit: frontend/.env.production
+2. Replace with your backend URL:
+   VITE_API_URL=https://your-backend-url.onrender.com
+3. Save
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 STEP 3: DEPLOY DASHBOARD (5 min)
+
+1. Install Vercel CLI:
+   npm install -g vercel
+
+2. Deploy:
+   cd frontend
+   vercel
+
+3. Answer prompts:
+   ├─ Set up and deploy? Y
+   ├─ Project name? ai-glasses-dashboard
+   └─ Override settings? N
+
+4. Deploy to production:
+   vercel --prod
+
+5. Copy your dashboard URL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✅ TEST YOUR DEPLOYMENT (2 min)
+
+Backend:
+  curl https://your-backend-url.onrender.com/models
+
+Dashboard:
+  Open: https://your-dashboard-url.vercel.app
+  Upload glasses images
+  Test AI matching
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎉 YOU'RE LIVE!
+
+Backend:  https://_____________________________.onrender.com
+Dashboard: https://_____________________________.vercel.app
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📚 NEED MORE HELP?
+
+├─ DEPLOY_NOW.md - Detailed step-by-step guide
+├─ DEPLOY_CHECKLIST.md - Interactive checklist
+├─ WHAT_TO_DEPLOY.md - Visual guide
+└─ DEPLOYMENT_README.md - Overview
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+⚠️  IMPORTANT NOTES
+
+• First request may take 30-60s (cold start on free tier)
+• Backend sleeps after 15 min inactivity
+• Both deployments are FREE
+• Upgrade later if needed ($7-20/month)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 READY? START WITH: DEPLOY_NOW.md

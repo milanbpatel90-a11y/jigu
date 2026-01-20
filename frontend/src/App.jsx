@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import Viewer from "./Viewer.jsx";
-import TryOnView from "./tryon/TryOnView.jsx";
 
 const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
@@ -13,7 +12,6 @@ export default function App() {
   const [error, setError] = useState(null);
   const [savedModels, setSavedModels] = useState([]);
   const [selectedModel, setSelectedModel] = useState(null);
-  const [tryOnModel, setTryOnModel] = useState(null); // Model being tried on
 
   // Load saved models from API
   useEffect(() => {
@@ -274,19 +272,6 @@ export default function App() {
                   </div>
                 )}
                 <button className="btn btn-save" onClick={saveModel}>💾 Save to Dashboard</button>
-                <button 
-                  className="btn btn-tryon" 
-                  onClick={() => setTryOnModel({
-                    url: matchResult.model_url,
-                    style: {
-                      lensColor: matchResult.lensColor || "#3b82f6",
-                      frameColor: matchResult.frameColor || "#1a1a1a",
-                      tintOpacity: matchResult.tintOpacity || 0.5
-                    }
-                  })}
-                >
-                  👓 Try On
-                </button>
               </div>
               <div className="viewer-container">
                 <Viewer 
@@ -372,19 +357,6 @@ export default function App() {
                     </div>
                     <div className="info-row"><span>Saved:</span><strong>{new Date(selectedModel.savedAt).toLocaleString()}</strong></div>
                   </div>
-                  <button 
-                    className="btn btn-tryon detail-tryon-btn" 
-                    onClick={() => setTryOnModel({
-                      url: selectedModel.glbUrl || selectedModel.model_url,
-                      style: {
-                        lensColor: selectedModel.colors?.lens || selectedModel.lensColor,
-                        frameColor: selectedModel.colors?.frame || selectedModel.frameColor,
-                        tintOpacity: selectedModel.tintOpacity
-                      }
-                    })}
-                  >
-                    👓 Try On
-                  </button>
                   <div className="detail-viewer">
                     <Viewer 
                       modelUrl={selectedModel.glbUrl || selectedModel.model_url}
@@ -402,19 +374,6 @@ export default function App() {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      )}
-
-      {/* Try-On Modal */}
-      {tryOnModel && (
-        <div className="tryon-modal-overlay" onClick={() => setTryOnModel(null)}>
-          <div className="tryon-modal" onClick={(e) => e.stopPropagation()}>
-            <TryOnView
-              glassesModelUrl={tryOnModel.url}
-              glassesStyle={tryOnModel.style}
-              onClose={() => setTryOnModel(null)}
-            />
           </div>
         </div>
       )}

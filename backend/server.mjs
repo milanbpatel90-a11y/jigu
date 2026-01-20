@@ -78,6 +78,64 @@ app.get("/local-models/:filename", (req, res) => {
   }
 });
 
+// Proxy endpoint to serve S3 models with fresh signed URLs
+app.get("/proxy-model/:filename", async (req, res) => {
+  const filename = decodeURIComponent(req.params.filename);
+  console.log(`Proxy request for model: ${filename}`);
+  
+  if (!hasValidCredentials) {
+    // Fallback to local model
+    const localPath = path.join("uploads", "glasses2.glb");
+    if (fs.existsSync(localPath)) {
+      res.setHeader('Content-Type', 'model/gltf-binary');
+      res.setHeader('Access-Control-Allow-Origin', '*');
+      return res.sendFile(path.resolve(localPath));
+    }
+    return res.status(404).json({ error: "Model not found" });
+  }
+  
+  try {
+    // Stream the model directly from S3
+    const params = { Bucket: BUCKET, Key: filename };
+    const s3Stream = s3.getObject(params).createReadStream();
+    
+    res.setHeader('Content-Type', 'model/gltf-binary');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cache-Control', 'public, max-age=3600');
+    
+    s3Stream.on('error', (err) => {
+      console.error(`S3 stream error for ${filename}:`, err.message);
+      res.status(404).json({ error: "Model not found in S3" });
+    });
+    
+    s3Stream.pipe(res);
+  } catch (e) {
+    console.error(`Proxy error for ${filename}:`, e.message);
+    res.status(500).json({ error: "Failed to fetch model" });
+  }
+});
+
+// Get fresh signed URL for a model
+app.get("/model-url/:filename", (req, res) => {
+  const filename = decodeURIComponent(req.params.filename);
+  
+  if (!hasValidCredentials) {
+    return res.json({ url: `http://localhost:5000/local-models/glasses2.glb` });
+  }
+  
+  try {
+    const url = s3.getSignedUrl("getObject", { 
+      Bucket: BUCKET, 
+      Key: filename, 
+      Expires: 3600 
+    });
+    res.json({ url });
+  } catch (e) {
+    console.error(`Error generating URL for ${filename}:`, e.message);
+    res.status(500).json({ error: "Failed to generate URL" });
+  }
+});
+
 app.get("/models", optionalAuth, async (req, res) => {
   // Skip S3 if credentials are invalid to avoid timeouts
   if (!hasValidCredentials) {
@@ -231,12 +289,8 @@ app.post("/match-model", optionalAuth, upload.array("images", 5), async (req, re
                 }
               }
               
-              jsonOut.model_url = s3.getSignedUrl("getObject", { 
-                Bucket: BUCKET, 
-                Key: modelKey, 
-                Expires: 3600 
-              });
-              console.log("Generated S3 model URL for:", modelKey);
+              jsonOut.model_url = `http://localhost:5000/proxy-model/${encodeURIComponent(modelKey)}`;
+              console.log("Generated proxy model URL for:", modelKey);
             } catch (s3Error) {
               console.log("S3 URL generation failed, using local fallback");
               jsonOut.model_url = "http://localhost:5000/local-models/glasses2.glb";
