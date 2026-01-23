@@ -10,6 +10,6 @@
     }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/frontend/index.html" }
   ]
 }
