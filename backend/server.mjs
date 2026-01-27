@@ -253,7 +253,10 @@ app.post("/match-model", optionalAuth, upload.array("images", 5), async (req, re
       filePaths.forEach(p => fs.unlink(p, () => {}));
       if (code !== 0) return res.status(500).json({ error: "AI matching failed", details: errOut || out });
       try {
-        const jsonOut = JSON.parse(out);
+        // Only parse the last line of stdout as JSON (Python may print debug info earlier)
+        const lines = out.trim().split('\n');
+        const jsonLine = lines[lines.length - 1];
+        const jsonOut = JSON.parse(jsonLine);
         console.log("Parsed JSON:", jsonOut);
         
         // Check if there was an error in the Python output
