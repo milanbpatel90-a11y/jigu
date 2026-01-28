@@ -752,6 +752,12 @@ def clip_match(image_paths):
 
         sims = (mean_feat @ ref_feats.T).squeeze(0)
         
+        # Show top 5 matches for debugging
+        top5_idx = torch.topk(sims, 5).indices.tolist()
+        top5_scores = [sims[i].item() for i in top5_idx]
+        top5_names = [ref_filenames[i] for i in top5_idx]
+        print(f"Top 5 matches: {list(zip(top5_names, top5_scores))}", file=sys.stderr)
+        
         # Analyze uploaded image shape
         uploaded_shape = analyze_frame_shape(up_imgs[0])
         print(f"Uploaded image shape analysis: {uploaded_shape}", file=sys.stderr)
