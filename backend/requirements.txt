@@ -1,4 +1,18 @@
+# Core AI dependencies
 torch
 transformers
 pillow
 numpy
+scipy
+
+# OpenAI GPT-4 Vision for visual similarity matching
+openai>=1.0.0
+
+# Environment variables
+python-dotenv
+
+# AWS/Wasabi S3 access (optional, for direct Python S3 access)
+boto3
+
+# Image processing
+colorsys
