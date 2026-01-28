@@ -4,7 +4,7 @@ AI Vision Matcher - Uses GPT-4 Vision to find visually similar 3D glasses models
 Matches based on actual visual appearance of glasses, not just model names
 
 Author: AI Glasses Finder
-Version: 2.0.0
+Version: 2.1.0 - Added background removal and dotenv support
 """
 
 import sys
@@ -16,6 +16,19 @@ import hashlib
 from typing import Dict, List, Optional, Tuple
 from pathlib import Path
 
+# Load environment variables from .env file
+try:
+    from dotenv import load_dotenv
+    # Load from backend/.env or current directory
+    env_path = Path(__file__).parent / '.env'
+    if env_path.exists():
+        load_dotenv(env_path)
+        print(f"Loaded .env from {env_path}", file=sys.stderr)
+    else:
+        load_dotenv()  # Try default locations
+except ImportError:
+    print("python-dotenv not installed, using system env vars", file=sys.stderr)
+
 # Try to import OpenAI
 try:
     from openai import OpenAI
@@ -26,18 +39,118 @@ except ImportError:
 
 # Try to import image processing libraries
 try:
-    from PIL import Image
+    from PIL import Image, ImageFilter
     import numpy as np
     HAS_PIL = True
 except ImportError:
     HAS_PIL = False
     print("PIL/numpy not installed, color extraction limited", file=sys.stderr)
 
+# Try to import rembg for background removal
+try:
+    from rembg import remove as remove_bg
+    HAS_REMBG = True
+    print("rembg available for background removal", file=sys.stderr)
+except ImportError:
+    HAS_REMBG = False
+    print("rembg not installed, using basic background removal", file=sys.stderr)
+
 # Configuration
 MODELS_CACHE_FILE = "models_cache.json"
 REF_DIR = "reference_images"
 MODEL_FEATURES_CACHE = "model_features_cache.json"
 VISION_ANALYSIS_CACHE = "vision_analysis_cache.json"
+TEMP_DIR = "uploads"
+
+
+def remove_background(image_path: str) -> str:
+    """
+    Remove background from glasses image for better AI analysis.
+    Returns path to processed image (or original if removal fails).
+    """
+    if not HAS_PIL:
+        return image_path
+
+    try:
+        img = Image.open(image_path).convert('RGBA')
+
+        # Method 1: Use rembg if available (best quality)
+        if HAS_REMBG:
+            print(f"  Removing background with rembg: {os.path.basename(image_path)}", file=sys.stderr)
+            output = remove_bg(img)
+            # Save to temp file
+            temp_path = os.path.join(TEMP_DIR, f"nobg_{os.path.basename(image_path)}")
+            if not temp_path.lower().endswith('.png'):
+                temp_path = temp_path.rsplit('.', 1)[0] + '.png'
+            output.save(temp_path, 'PNG')
+            return temp_path
+
+        # Method 2: Simple background removal using edge detection and color analysis
+        print(f"  Removing background (basic): {os.path.basename(image_path)}", file=sys.stderr)
+        img_array = np.array(img.convert('RGB'))
+
+        # Detect edges
+        gray = np.mean(img_array, axis=2)
+
+        # Simple gradient-based edge detection
+        gx = np.abs(np.diff(gray, axis=1, prepend=gray[:, :1]))
+        gy = np.abs(np.diff(gray, axis=0, prepend=gray[:1, :]))
+        edges = np.sqrt(gx**2 + gy**2)
+
+        # Create mask: keep areas with edges or darker colors (likely glasses)
+        edge_threshold = 15
+        brightness_threshold = 240
+
+        edge_mask = edges > edge_threshold
+        dark_mask = gray < brightness_threshold
+
+        # Combine masks
+        mask = edge_mask | dark_mask
+
+        # Dilate mask to include nearby pixels
+        from scipy import ndimage
+        mask = ndimage.binary_dilation(mask, iterations=5)
+        mask = ndimage.binary_fill_holes(mask)
+
+        # Apply mask - set background to white
+        result = img_array.copy()
+        for c in range(3):
+            result[:, :, c] = np.where(mask, result[:, :, c], 255)
+
+        # Save result
+        output = Image.fromarray(result.astype(np.uint8))
+        temp_path = os.path.join(TEMP_DIR, f"nobg_{os.path.basename(image_path)}")
+        if not temp_path.lower().endswith('.png'):
+            temp_path = temp_path.rsplit('.', 1)[0] + '.png'
+        output.save(temp_path, 'PNG')
+        return temp_path
+
+    except ImportError:
+        # scipy not available, return original
+        print("  scipy not available for background removal", file=sys.stderr)
+        return image_path
+    except Exception as e:
+        print(f"  Background removal failed: {e}", file=sys.stderr)
+        return image_path
+
+
+def preprocess_images(image_paths: List[str], remove_bg_flag: bool = True) -> List[str]:
+    """
+    Preprocess images before analysis: remove background, enhance contrast.
+    Returns list of processed image paths.
+    """
+    if not remove_bg_flag:
+        return image_paths
+
+    processed = []
+    for path in image_paths:
+        if os.path.exists(path):
+            processed_path = remove_background(path)
+            processed.append(processed_path)
+        else:
+            processed.append(path)
+
+    return processed
 
 
 def encode_image_base64(image_path: str) -> str:
@@ -97,7 +210,10 @@ def analyze_glasses_with_gpt4(image_paths: List[str], api_key: str = None) -> Op
     api_key = api_key or os.environ.get("OPENAI_API_KEY")
     if not api_key:
         print("No OpenAI API key found in environment", file=sys.stderr)
+        print("Set OPENAI_API_KEY in .env file or environment", file=sys.stderr)
         return None
+
+    print(f"Using OpenAI API key: {api_key[:20]}...{api_key[-4:]}", file=sys.stderr)
 
     # Check cache first
     cache = load_json_cache(VISION_ANALYSIS_CACHE)
@@ -702,10 +818,14 @@ def find_model_by_shape(shape: str, models: List[str]) -> Tuple[str, float]:
     return models[0] if models else "3d_glasses.glb", 0.40
 
 
-def find_best_match_vision(image_paths: List[str]) -> Dict:
+def find_best_match_vision(image_paths: List[str], remove_bg: bool = True) -> Dict:
     """
     Main matching function - Uses GPT-4 Vision for visual similarity matching.
     Falls back to shape-based matching if GPT-4 is not available.
+
+    Args:
+        image_paths: List of paths to uploaded images
+        remove_bg: Whether to remove background before analysis (default True)
     """
 
     # Load available models
@@ -715,8 +835,15 @@ def find_best_match_vision(image_paths: List[str]) -> Dict:
 
     print(f"Loaded {len(models)} available 3D models", file=sys.stderr)
 
+    # Preprocess images (remove background for better analysis)
+    if remove_bg:
+        print("🖼️ Preprocessing images (removing background)...", file=sys.stderr)
+        processed_paths = preprocess_images(image_paths, remove_bg_flag=True)
+    else:
+        processed_paths = image_paths
+
     # Extract colors from uploaded images (always needed for 3D model customization)
-    color_properties = extract_colors_from_images(image_paths)
+    color_properties = extract_colors_from_images(processed_paths)
     print(f"Extracted colors: frame={color_properties.get('frameColor')}, "
           f"lens={color_properties.get('lensColor')}", file=sys.stderr)
 
@@ -724,7 +851,7 @@ def find_best_match_vision(image_paths: List[str]) -> Dict:
     uploaded_features = None
     if HAS_OPENAI and os.environ.get("OPENAI_API_KEY"):
         print("🔍 Analyzing with GPT-4 Vision...", file=sys.stderr)
-        uploaded_features = analyze_glasses_with_gpt4(image_paths)
+        uploaded_features = analyze_glasses_with_gpt4(processed_paths)
 
         if uploaded_features:
             # Override color properties with GPT-4's analysis (more accurate)
@@ -882,9 +1009,21 @@ def main():
         print(json.dumps({"error": "No valid image files found", "matched": False}))
         return
 
+    # Check for --no-bg flag
+    remove_bg = "--no-bg" not in sys.argv
+
     # Run matching
-    result = find_best_match_vision(valid_images)
+    result = find_best_match_vision(valid_images, remove_bg=remove_bg)
     print(json.dumps(result))
+
+    # Cleanup temp files
+    for img in valid_images:
+        temp_path = os.path.join(TEMP_DIR, f"nobg_{os.path.basename(img)}")
+        if os.path.exists(temp_path):
+            try:
+                os.remove(temp_path)
+            except:
+                pass
 
 
 if __name__ == "__main__":
