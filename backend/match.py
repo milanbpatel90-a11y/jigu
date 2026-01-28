@@ -796,9 +796,12 @@ def clip_match(image_paths):
                         sims_boosted[i] -= 0.1
                         break
         
-        best_idx = int(torch.argmax(sims_boosted).item())
-        best_score = float(sims[best_idx].item())  # Use original score for confidence
-        best_ref = ref_filenames[best_idx]
+        # TEMP: Return a random model for testing frontend variety
+        import random
+        random_idx = random.randint(0, len(ref_filenames) - 1)
+        best_ref = ref_filenames[random_idx]
+        best_score = 0.8
+        print(f"TEMP: Returning random model: {best_ref}", file=sys.stderr)
 
         base = os.path.splitext(best_ref)[0]
         confidence = (best_score + 1.0) / 2.0
