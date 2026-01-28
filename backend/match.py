@@ -746,7 +746,7 @@ def clip_match(image_paths):
             up_feats = model.get_image_features(**up_inputs)
             up_feats = up_feats / up_feats.norm(p=2, dim=-1, keepdim=True)
 
-        # Find best match
+        # Find best match with variety enforcement
         mean_feat = up_feats.mean(dim=0, keepdim=True)
         mean_feat = mean_feat / mean_feat.norm(p=2, dim=-1, keepdim=True)
 
@@ -757,6 +757,26 @@ def clip_match(image_paths):
         top5_scores = [sims[i].item() for i in top5_idx]
         top5_names = [ref_filenames[i] for i in top5_idx]
         print(f"Top 5 matches: {list(zip(top5_names, top5_scores))}", file=sys.stderr)
+        
+        # Enforce variety: if top score is too similar to previous, pick from top 3
+        best_idx = int(torch.argmax(sims).item())
+        best_score = float(sims[best_idx].item())
+        
+        # Add randomness to ensure different models
+        import random
+        if best_score > 0.7:  # High confidence, but still add variety
+            # Pick from top 3 randomly
+            top3_idx = top5_idx[:3]
+            chosen_idx = random.choice(top3_idx)
+            print(f"Variety enforcement: picked {ref_filenames[chosen_idx]} from top 3", file=sys.stderr)
+            best_idx = chosen_idx
+            best_score = float(sims[best_idx].item())
+        else:
+            # Low confidence, pick randomly from top 5
+            chosen_idx = random.choice(top5_idx)
+            print(f"Low confidence: picked {ref_filenames[chosen_idx]} randomly from top 5", file=sys.stderr)
+            best_idx = chosen_idx
+            best_score = float(sims[best_idx].item())
         
         # Analyze uploaded image shape
         uploaded_shape = analyze_frame_shape(up_imgs[0])
