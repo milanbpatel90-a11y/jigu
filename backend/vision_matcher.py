@@ -1,10 +1,16 @@
 #!/usr/bin/env python3
 """
-AI Vision Matcher - Uses GPT-4 Vision to find visually similar 3D glasses models
+AI Vision Matcher - Uses FREE AI Vision APIs to find visually similar 3D glasses models
 Matches based on actual visual appearance of glasses, not just model names
 
+Supported AI Providers (in order of preference):
+1. Google Gemini - 15 req/min, 1500 req/day FREE
+2. Local CLIP - No API needed, runs locally (BEST FALLBACK)
+3. Hugging Face - Unlimited with rate limits FREE
+4. OpenAI GPT-4 Vision - Paid option
+
 Author: AI Glasses Finder
-Version: 2.1.0 - Added background removal and dotenv support
+Version: 3.1.0 - Enhanced local CLIP matching (no API required)
 """
 
 import sys
@@ -29,13 +35,45 @@ try:
 except ImportError:
     print("python-dotenv not installed, using system env vars", file=sys.stderr)
 
-# Try to import OpenAI
+# Try to import Groq - FREE (fastest inference, generous limits)
+try:
+    from groq import Groq
+    HAS_GROQ = True
+    print("✅ Groq available (FREE - fastest)", file=sys.stderr)
+except ImportError:
+    HAS_GROQ = False
+    print("Groq not installed: pip install groq", file=sys.stderr)
+
+# Try to import Google Generative AI (Gemini) - FREE
+try:
+    from google import genai
+    HAS_GEMINI = True
+    print("✅ Google Gemini available (FREE)", file=sys.stderr)
+except ImportError:
+    try:
+        # Fallback to old package
+        import google.generativeai as genai_old
+        HAS_GEMINI = True
+        print("✅ Google Gemini available (old package)", file=sys.stderr)
+    except ImportError:
+        HAS_GEMINI = False
+        print("Google Gemini not installed: pip install google-genai", file=sys.stderr)
+
+# Try to import Hugging Face for free inference - FREE
+try:
+    import requests as hf_requests
+    HAS_HUGGINGFACE = True
+    print("✅ Hugging Face available (FREE)", file=sys.stderr)
+except ImportError:
+    HAS_HUGGINGFACE = False
+
+# Try to import OpenAI (paid - used as last resort)
 try:
     from openai import OpenAI
     HAS_OPENAI = True
 except ImportError:
     HAS_OPENAI = False
-    print("OpenAI not installed, will use fallback matching", file=sys.stderr)
+    print("OpenAI not installed (optional - paid service)", file=sys.stderr)
 
 # Try to import image processing libraries
 try:
@@ -55,12 +93,28 @@ except ImportError:
     HAS_REMBG = False
     print("rembg not installed, using basic background removal", file=sys.stderr)
 
+# Try to import CLIP for local matching (NO API NEEDED)
+# Using sentence-transformers which has better compatibility
+HAS_CLIP = False
+try:
+    from sentence_transformers import SentenceTransformer, util
+    from PIL import Image as PILImage
+    import torch
+    HAS_CLIP = True
+    print("✅ Local CLIP available (NO API NEEDED - sentence-transformers)", file=sys.stderr)
+except ImportError:
+    print("sentence-transformers not installed: pip install sentence-transformers", file=sys.stderr)
+
 # Configuration
 MODELS_CACHE_FILE = "models_cache.json"
 REF_DIR = "reference_images"
 MODEL_FEATURES_CACHE = "model_features_cache.json"
 VISION_ANALYSIS_CACHE = "vision_analysis_cache.json"
 TEMP_DIR = "uploads"
+
+# Hugging Face API endpoint (FREE)
+HF_API_URL = "https://api-inference.huggingface.co/models/Salesforce/blip-image-captioning-large"
+HF_VISION_URL = "https://api-inference.huggingface.co/models/llava-hf/llava-1.5-7b-hf"
 
 
 def remove_background(image_path: str) -> str:
@@ -198,10 +252,362 @@ def save_json_cache(filepath: str, data: Dict):
         print(f"Error saving cache {filepath}: {e}", file=sys.stderr)
 
 
+def analyze_glasses_with_clip(image_paths: List[str]) -> Optional[Dict]:
+    """
+    Use LOCAL CLIP model via sentence-transformers to analyze glasses images.
+    NO API KEY NEEDED - runs completely offline!
+
+    This is the most reliable fallback as it doesn't depend on external services.
+    Uses sentence-transformers which avoids TensorFlow conflicts.
+    """
+    if not HAS_CLIP or not HAS_PIL:
+        print("CLIP or PIL not available for local matching", file=sys.stderr)
+        return None
+
+    print("🔍 Using Local CLIP (NO API NEEDED)...", file=sys.stderr)
+
+    try:
+        # Load CLIP model via sentence-transformers (cached after first load)
+        print("  Loading CLIP model (sentence-transformers)...", file=sys.stderr)
+        model = SentenceTransformer('clip-ViT-B-32')
+
+        # Load image
+        if not image_paths or not os.path.exists(image_paths[0]):
+            return None
+
+        image = Image.open(image_paths[0]).convert("RGB")
+
+        # Encode image
+        img_embedding = model.encode(image, convert_to_tensor=True)
+
+        # Define glasses shape categories for CLIP classification
+        shape_prompts = [
+            "round circular glasses",
+            "rectangular square glasses",
+            "aviator pilot sunglasses",
+            "cat eye feminine glasses",
+            "wayfarer classic glasses",
+            "oversized big glasses",
+            "oval shaped glasses",
+            "sport wrap around glasses",
+            "geometric hexagonal glasses",
+            "rimless frameless glasses",
+            "heart shaped glasses",
+            "clubmaster browline glasses"
+        ]
+
+        shape_map = {
+            0: "round", 1: "rectangular", 2: "aviator", 3: "cat_eye",
+            4: "wayfarer", 5: "oversized", 6: "oval", 7: "sport",
+            8: "geometric", 9: "rimless", 10: "heart", 11: "clubmaster"
+        }
+
+        # Classify shape
+        text_embeddings = model.encode(shape_prompts, convert_to_tensor=True)
+        similarities = util.cos_sim(img_embedding, text_embeddings)[0]
+        shape_idx = similarities.argmax().item()
+        shape_confidence = similarities[shape_idx].item()
+
+        detected_shape = shape_map.get(shape_idx, "rectangular")
+        print(f"  Shape detected: {detected_shape} ({shape_confidence:.1%} confidence)", file=sys.stderr)
+
+        # Define material categories
+        material_prompts = [
+            "metal wire frame glasses",
+            "plastic acetate frame glasses",
+            "titanium lightweight glasses",
+            "wooden frame glasses"
+        ]
+        material_map = {0: "metal", 1: "plastic", 2: "titanium", 3: "wood"}
+
+        text_embeddings = model.encode(material_prompts, convert_to_tensor=True)
+        similarities = util.cos_sim(img_embedding, text_embeddings)[0]
+        material_idx = similarities.argmax().item()
+
+        detected_material = material_map.get(material_idx, "plastic")
+        print(f"  Material detected: {detected_material}", file=sys.stderr)
+
+        # Define style categories
+        style_prompts = [
+            "vintage retro classic glasses",
+            "modern minimalist glasses",
+            "sporty athletic sunglasses",
+            "luxury designer expensive glasses",
+            "casual everyday glasses",
+            "futuristic tech glasses"
+        ]
+        style_map = {0: "vintage", 1: "modern", 2: "sporty", 3: "luxury", 4: "casual", 5: "futuristic"}
+
+        text_embeddings = model.encode(style_prompts, convert_to_tensor=True)
+        similarities = util.cos_sim(img_embedding, text_embeddings)[0]
+        style_idx = similarities.argmax().item()
+
+        detected_style = style_map.get(style_idx, "casual")
+        print(f"  Style detected: {detected_style}", file=sys.stderr)
+
+        # Define color categories
+        color_prompts = [
+            "black colored glasses frame",
+            "brown tortoise colored glasses",
+            "gold golden colored glasses",
+            "silver chrome colored glasses",
+            "clear transparent glasses",
+            "blue colored glasses frame",
+            "red colored glasses frame",
+            "pink rose colored glasses"
+        ]
+        color_map = {0: "black", 1: "brown", 2: "gold", 3: "silver", 4: "clear", 5: "blue", 6: "red", 7: "pink"}
+
+        text_embeddings = model.encode(color_prompts, convert_to_tensor=True)
+        similarities = util.cos_sim(img_embedding, text_embeddings)[0]
+        color_idx = similarities.argmax().item()
+
+        detected_color = color_map.get(color_idx, "black")
+        print(f"  Color detected: {detected_color}", file=sys.stderr)
+
+        # Define thickness categories
+        thickness_prompts = [
+            "thin wire frame glasses",
+            "medium thickness frame glasses",
+            "thick bold chunky frame glasses"
+        ]
+        thickness_map = {0: "thin", 1: "medium", 2: "thick"}
+
+        text_embeddings = model.encode(thickness_prompts, convert_to_tensor=True)
+        similarities = util.cos_sim(img_embedding, text_embeddings)[0]
+        thickness_idx = similarities.argmax().item()
+
+        detected_thickness = thickness_map.get(thickness_idx, "medium")
+
+        print(f"✅ CLIP analysis complete: {detected_shape}, {detected_material}, {detected_style}", file=sys.stderr)
+
+        return {
+            "shape": detected_shape,
+            "frame_color_name": detected_color,
+            "material": detected_material,
+            "style": detected_style,
+            "frame_thickness": detected_thickness,
+            "lens_type": "clear",
+            "size": "medium",
+            "method": "local_clip"
+        }
+
+    except Exception as e:
+        print(f"CLIP analysis failed: {e}", file=sys.stderr)
+        import traceback
+        traceback.print_exc(file=sys.stderr)
+        return None
+
+
+def analyze_glasses_with_gemini(image_paths: List[str], api_key: str = None) -> Optional[Dict]:
+    """
+    Use Google Gemini Vision (FREE) to analyze glasses images.
+    FREE TIER: 15 requests/minute, 1500 requests/day
+    """
+    if not HAS_GEMINI:
+        print("Google Gemini not available", file=sys.stderr)
+        return None
+
+    api_key = api_key or os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")
+    if not api_key:
+        print("No Google API key found. Get FREE key at: https://aistudio.google.com/app/apikey", file=sys.stderr)
+        return None
+
+    print(f"🔍 Using Google Gemini (FREE): {api_key[:10]}...{api_key[-4:]}", file=sys.stderr)
+
+    # Analysis prompt
+    prompt = """Analyze these eyeglasses/sunglasses images carefully.
+
+Return ONLY a valid JSON object with these exact fields (no markdown, no explanation):
+{
+    "shape": "round" | "rectangular" | "square" | "oval" | "aviator" | "cat_eye" | "wayfarer" | "oversized" | "geometric" | "heart" | "rimless" | "sport" | "wrap" | "pilot" | "clubmaster",
+    "frame_color_hex": "#RRGGBB",
+    "frame_color_name": "black" | "brown" | "gold" | "silver" | "tortoise" | "clear" | "white" | "red" | "blue" | "green" | "pink" | "purple" | "rose_gold" | "gunmetal",
+    "lens_color_hex": "#RRGGBB or null if clear",
+    "lens_type": "clear" | "tinted" | "gradient" | "mirrored",
+    "lens_tint_percentage": 0-100,
+    "material": "metal" | "plastic" | "acetate" | "titanium" | "mixed",
+    "frame_thickness": "thin" | "medium" | "thick" | "bold" | "rimless",
+    "style": "vintage" | "modern" | "classic" | "sporty" | "luxury" | "casual" | "retro" | "futuristic" | "minimalist",
+    "size": "small" | "medium" | "large" | "oversized",
+    "brand_similarity": "ray-ban" | "oakley" | "gucci" | "prada" | "chanel" | "generic" | "vintage" | "designer",
+    "overall_aesthetic": "2-4 word description"
+}"""
+
+    try:
+        # Try new google-genai package first
+        from google import genai
+
+        client = genai.Client(api_key=api_key)
+
+        # Load images and prepare content
+        contents = [prompt]
+        for img_path in image_paths[:4]:
+            if os.path.exists(img_path):
+                img = Image.open(img_path)
+                contents.append(img)
+
+        if len(contents) <= 1:
+            return None
+
+        # Call Gemini with new API - try multiple models
+        models_to_try = ["gemini-1.5-flash", "gemini-1.5-pro", "gemini-2.0-flash"]
+        response = None
+        last_error = None
+
+        for model_name in models_to_try:
+            try:
+                print(f"  Trying model: {model_name}", file=sys.stderr)
+                response = client.models.generate_content(
+                    model=model_name,
+                    contents=contents
+                )
+                break  # Success, exit loop
+            except Exception as model_error:
+                last_error = model_error
+                if "429" in str(model_error) or "RESOURCE_EXHAUSTED" in str(model_error):
+                    print(f"  Rate limited on {model_name}, trying next...", file=sys.stderr)
+                    continue
+                elif "not found" in str(model_error).lower():
+                    print(f"  Model {model_name} not available, trying next...", file=sys.stderr)
+                    continue
+                else:
+                    raise model_error
+
+        if response is None:
+            raise last_error or Exception("All Gemini models failed")
+        result_text = response.text.strip()
+
+        # Extract JSON
+        if "```json" in result_text:
+            result_text = result_text.split("```json")[1].split("```")[0].strip()
+        elif "```" in result_text:
+            result_text = result_text.split("```")[1].split("```")[0].strip()
+
+        result = json.loads(result_text)
+        print(f"✅ Gemini analysis: shape={result.get('shape')}, material={result.get('material')}", file=sys.stderr)
+        return result
+
+    except ImportError:
+        # Fallback to old google.generativeai package
+        try:
+            import google.generativeai as genai_old
+
+            genai_old.configure(api_key=api_key)
+            model = genai_old.GenerativeModel('gemini-1.5-flash')
+
+            # Load images
+            images = []
+            for img_path in image_paths[:4]:
+                if os.path.exists(img_path):
+                    img = Image.open(img_path)
+                    images.append(img)
+
+            if not images:
+                return None
+
+            # Call Gemini with old API
+            response = model.generate_content([prompt] + images)
+            result_text = response.text.strip()
+
+            # Extract JSON
+            if "```json" in result_text:
+                result_text = result_text.split("```json")[1].split("```")[0].strip()
+            elif "```" in result_text:
+                result_text = result_text.split("```")[1].split("```")[0].strip()
+
+            result = json.loads(result_text)
+            print(f"✅ Gemini analysis (old API): shape={result.get('shape')}, material={result.get('material')}", file=sys.stderr)
+            return result
+
+        except Exception as e2:
+            print(f"Gemini old API also failed: {e2}", file=sys.stderr)
+            return None
+
+    except Exception as e:
+        print(f"Gemini analysis failed: {e}", file=sys.stderr)
+        return None
+
+
+def analyze_glasses_with_huggingface(image_paths: List[str], api_key: str = None) -> Optional[Dict]:
+    """
+    Use Hugging Face Inference API (FREE) to analyze glasses images.
+    Uses BLIP for image captioning and analysis.
+    """
+    if not HAS_HUGGINGFACE or not HAS_PIL:
+        return None
+
+    api_key = api_key or os.environ.get("HUGGINGFACE_API_KEY") or os.environ.get("HF_API_KEY")
+
+    headers = {}
+    if api_key:
+        headers["Authorization"] = f"Bearer {api_key}"
+        print(f"🔍 Using Hugging Face with API key (FREE)", file=sys.stderr)
+    else:
+        print(f"🔍 Using Hugging Face without API key (FREE, slower)", file=sys.stderr)
+
+    try:
+        # Load first image
+        if not image_paths or not os.path.exists(image_paths[0]):
+            return None
+
+        with open(image_paths[0], "rb") as f:
+            image_data = f.read()
+
+        # Use BLIP for image understanding
+        response = hf_requests.post(
+            "https://api-inference.huggingface.co/models/Salesforce/blip-vqa-base",
+            headers=headers,
+            json={
+                "inputs": {
+                    "image": base64.b64encode(image_data).decode("utf-8"),
+                    "question": "What is the shape of these glasses? Is it round, rectangular, aviator, cat-eye, or other?"
+                }
+            },
+            timeout=30
+        )
+
+        if response.status_code == 200:
+            result = response.json()
+            answer = result[0].get("answer", "").lower() if isinstance(result, list) else ""
+
+            # Parse shape from answer
+            shape = "rectangular"  # default
+            if "round" in answer or "circular" in answer:
+                shape = "round"
+            elif "aviator" in answer or "pilot" in answer:
+                shape = "aviator"
+            elif "cat" in answer:
+                shape = "cat_eye"
+            elif "square" in answer:
+                shape = "square"
+            elif "oval" in answer:
+                shape = "oval"
+
+            print(f"✅ Hugging Face detected shape: {shape}", file=sys.stderr)
+
+            return {
+                "shape": shape,
+                "frame_color_name": "black",
+                "material": "plastic",
+                "style": "classic",
+                "frame_thickness": "medium",
+                "lens_type": "clear",
+                "size": "medium"
+            }
+        else:
+            print(f"Hugging Face API error: {response.status_code}", file=sys.stderr)
+            return None
+
+    except Exception as e:
+        print(f"Hugging Face analysis failed: {e}", file=sys.stderr)
+        return None
+
+
 def analyze_glasses_with_gpt4(image_paths: List[str], api_key: str = None) -> Optional[Dict]:
     """
-    Use GPT-4 Vision to analyze glasses images and extract detailed visual features.
-    This is the core AI analysis that examines the actual appearance of glasses.
+    Use GPT-4 Vision (PAID) to analyze glasses images.
+    This is used as a fallback if free options fail.
     """
     if not HAS_OPENAI:
         print("OpenAI library not available", file=sys.stderr)
@@ -209,11 +615,10 @@ def analyze_glasses_with_gpt4(image_paths: List[str], api_key: str = None) -> Op
 
     api_key = api_key or os.environ.get("OPENAI_API_KEY")
     if not api_key:
-        print("No OpenAI API key found in environment", file=sys.stderr)
-        print("Set OPENAI_API_KEY in .env file or environment", file=sys.stderr)
+        print("No OpenAI API key found (optional - paid service)", file=sys.stderr)
         return None
 
-    print(f"Using OpenAI API key: {api_key[:20]}...{api_key[-4:]}", file=sys.stderr)
+    print(f"Using OpenAI API key (PAID): {api_key[:20]}...{api_key[-4:]}", file=sys.stderr)
 
     # Check cache first
     cache = load_json_cache(VISION_ANALYSIS_CACHE)
@@ -847,10 +1252,27 @@ def find_best_match_vision(image_paths: List[str], remove_bg: bool = True) -> Di
     print(f"Extracted colors: frame={color_properties.get('frameColor')}, "
           f"lens={color_properties.get('lensColor')}", file=sys.stderr)
 
-    # Try GPT-4 Vision analysis
+    # Try AI providers in order of preference
     uploaded_features = None
-    if HAS_OPENAI and os.environ.get("OPENAI_API_KEY"):
-        print("🔍 Analyzing with GPT-4 Vision...", file=sys.stderr)
+
+    # 1. Try Google Gemini (FREE - 1500 req/day) - Best quality when available
+    if not uploaded_features and HAS_GEMINI and (os.environ.get("GOOGLE_API_KEY") or os.environ.get("GEMINI_API_KEY")):
+        print("🔍 Trying Google Gemini (FREE)...", file=sys.stderr)
+        uploaded_features = analyze_glasses_with_gemini(processed_paths)
+
+    # 2. Try Local CLIP (NO API NEEDED) - Most reliable, works offline
+    if not uploaded_features and HAS_CLIP:
+        print("🔍 Trying Local CLIP (NO API NEEDED)...", file=sys.stderr)
+        uploaded_features = analyze_glasses_with_clip(processed_paths)
+
+    # 3. Try Hugging Face (FREE - unlimited with rate limits)
+    if not uploaded_features and HAS_HUGGINGFACE:
+        print("🔍 Trying Hugging Face (FREE)...", file=sys.stderr)
+        uploaded_features = analyze_glasses_with_huggingface(processed_paths)
+
+    # 4. Fall back to OpenAI GPT-4 (PAID - only if free options unavailable)
+    if not uploaded_features and HAS_OPENAI and os.environ.get("OPENAI_API_KEY"):
+        print("🔍 Trying OpenAI GPT-4 Vision (PAID)...", file=sys.stderr)
         uploaded_features = analyze_glasses_with_gpt4(processed_paths)
 
         if uploaded_features:
@@ -991,9 +1413,26 @@ def main():
 
     if "--help" in sys.argv:
         print("Usage: python vision_matcher.py [options] <image1> [image2] ...")
+        print("")
         print("Options:")
         print("  --build, --analyze-references  Pre-analyze reference images")
+        print("  --no-bg                        Skip background removal")
         print("  --help                         Show this help")
+        print("")
+        print("AI Providers (in order of preference):")
+        print("")
+        print("  LOCAL (NO API KEY NEEDED):")
+        print("    Local CLIP      - Works offline, no limits ⭐ BEST FALLBACK")
+        print("                      Just install: pip install torch transformers")
+        print("")
+        print("  FREE (API key required):")
+        print("    GOOGLE_API_KEY  - Google Gemini (FREE: 1500 req/day)")
+        print("                      Get key: https://aistudio.google.com/app/apikey")
+        print("    HF_API_KEY      - Hugging Face (FREE: unlimited)")
+        print("                      Get key: https://huggingface.co/settings/tokens")
+        print("")
+        print("  PAID (optional):")
+        print("    OPENAI_API_KEY  - OpenAI GPT-4 Vision (paid)")
         return
 
     # Get image paths from arguments

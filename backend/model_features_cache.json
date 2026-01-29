@@ -1,0 +1,1469 @@
+{
+  "3d_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "black_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "black_glasses (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "black_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "bloody_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "bloody_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "cat-eye_glasses.png": {
+    "shape": "cat_eye",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "cat_eye_glasses.png": {
+    "shape": "cat_eye",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "chanel_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "luxury",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "chanel_glasses (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "luxury",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "chanel_glasses (3).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "luxury",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "chanel_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "luxury",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "croissant_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "deal_with_it_glasses_edition.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "deal_with_it_glasses_original.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "doflamingo_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "female_head_sculpt..png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "futuristic_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "futuristic",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "futuristic_glasses__super_sun_glasses__goggles.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "futuristic",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (10).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (11).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (12).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (13).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (14).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (15).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (16).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (17).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (18).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (19).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (20).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (21).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (22).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (23).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (24).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (25).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (26).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (27).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (28).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (29).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (3).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (30).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (31).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (32).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (33).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (34).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (35).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (36).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (37).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (38).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (39).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (4).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (40).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (41).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (42).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (43).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (44).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (45).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (46).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (47).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (48).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (49).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (5).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (50).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (51).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (52).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (53).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (54).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (55).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (56).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (57).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (58).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (59).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (6).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (60).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (61).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (62).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (63).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (64).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (7).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (8).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses (9).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses-2.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_06.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_07 (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_07.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_08 (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_08.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_09 (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_09 (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_09 (3).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_09.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_10 (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_10 (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_10.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_2.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_4.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses__sun_glasses_free (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "glasses__sun_glasses_free.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "glasses_cad (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_cad.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_collection.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_low-poly_model_download.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_project.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_rigel (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_rigel (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_rigel.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_steampunk.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_yellow (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_yellow (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "glasses_yellow.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "heart-shaped_glasses (1).png": {
+    "shape": "heart",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "heart-shaped_glasses.png": {
+    "shape": "heart",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "heart_glasses (1).png": {
+    "shape": "heart",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "heart_glasses.png": {
+    "shape": "heart",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "hiding_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "hiding_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "hipster_glasses_eyewear_spectacles.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "hipster",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "jujutsu_kaisen__kento_nanamis_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "laser_protection_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "low_poly_sun_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "low_poly_sun_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "mesh.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "metal_round_glasses (1).png": {
+    "shape": "round",
+    "material": "metal",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "metal_round_glasses.png": {
+    "shape": "round",
+    "material": "metal",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "minecraft_glasses_set_lowpoly (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "minecraft_glasses_set_lowpoly.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "neon_party_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "neon_party_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "nerd_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "hipster",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "oakley_glasses (1).png": {
+    "shape": "sport",
+    "material": "plastic",
+    "style": "sporty",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "oakley_glasses.png": {
+    "shape": "sport",
+    "material": "plastic",
+    "style": "sporty",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "orange_cool_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "pixel_artvoxel_art_deal_with_it_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "pixel_artvoxel_art_deal_with_it_glasses (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "pixel_artvoxel_art_deal_with_it_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "prada_vintage_star_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "vintage",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "prada_vintage_star_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "vintage",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses (1).png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses.png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses_subject_visualization (1).png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses_subject_visualization (2).png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses_subject_visualization (3).png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "ray_ban_glasses_subject_visualization.png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "rayban_style_glasses.png": {
+    "shape": "aviator",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "reading_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "realistic_simple_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "minimalist",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "scene.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "sun_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "sun_glasses (2).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "sun_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "sun_glasses_low_poly.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "tinted",
+    "size": "medium"
+  },
+  "swirlyhypno_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "thick_prescription_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "thick",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "thug_life__cool_glasses__stylise_goggles.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "transparent_glasses_with_baked_textures.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "clear",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "vr_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "futuristic",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "vr_glasses_-_concept (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "futuristic",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "vr_glasses_-_concept.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "futuristic",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "vuzix_blade_smart_glasses (1).png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  },
+  "vuzix_blade_smart_glasses.png": {
+    "shape": "rectangular",
+    "material": "plastic",
+    "style": "casual",
+    "frame_color_name": "black",
+    "frame_thickness": "medium",
+    "lens_type": "clear",
+    "size": "medium"
+  }
+}
